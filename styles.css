@@ -24,7 +24,7 @@
     font-size: 300px;
     text-align: center;
     width: 50%;
-    animation:infinite breathing ease-out 10s normal;
+    animation:infinite rotating ease-out 4s normal;
     animation-direction: alternate;
     rotate:0;
     position:absolute;
@@ -33,9 +33,9 @@
     transform-origin: center;
 }
 
-@keyframes breathing {
-    0% {font-size: 300px; rotate:-2deg;}
-    100% {font-size: 312px; rotate: 2deg}
+@keyframes rotating {
+    0% {rotate:-2deg;}
+    100% {rotate: 2deg}
 }
 
 
@@ -47,13 +47,17 @@
     margin-left: 35%;
     border: 6px black solid;
     margin-top: 5px;
-    transition-duration: 100ms;
+    animation: infinite breathing 3s normal;
+    animation-direction: alternate;
+    animation-play-state: running;
+}
+
+@keyframes breathing {
+    0% {width: calc(30% - 6px); font-size: 80px; margin-left: 35%; margin-top: 5px;}
+    100% {width: calc(31% - 6px); font-size: 90px; margin-left: 34.5%; margin-top: 0px;}
 }
 
 #title-button:hover {
-    width: calc(31% - 6px);
-    margin-left: 34.5%;
-    font-size: 90px;
-    margin-top: 0px;
+    animation-play-state:paused;
     cursor:pointer;
 }
