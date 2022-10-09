@@ -1,6 +1,16 @@
 //Initializes many variables
 const newDiv = document.createElement('div');
+const body = document.querySelector('body');
+var testDraw = false;
+var canvas = document.querySelector('canvas');
+var cursorx = 0;
+var cursory = 0;
+canvas.setAttribute("height", document.body.clientHeight);
+canvas.setAttribute("width", document.body.clientWidth);
+var ctx = canvas.getContext("2d");
 var terrain = [];
+var collisionsOn = true;
+var run = true;
 //Initializes player character
 var player = document.createElement('div', id='player')
 player.style.position="absolute";
@@ -10,6 +20,7 @@ player.style.height="50px";
 player.style.left= '10px';
 player.style.top= 'calc(50vh - 25px)';
 //Player controller variables
+var moveHorz = 0;
 var posx = 10;
 var posy = 0;
 var velx = 0;
@@ -25,30 +36,41 @@ window.addEventListener('DOMContentLoaded', function() {
     posy = player.getBoundingClientRect().top;
     //alert(posy);
 })
+
+body.addEventListener('mousedown', function() {
+    //alert('woah');
+    testDraw = true;
+})
+
+body.addEventListener('mouseup', function() {
+    //alert('haow');
+    testDraw = false;
+})
 //Reads keystrokes
 window.addEventListener('keydown', (event) => {
     //alert(event.keyCode);
     if (event.keyCode == 68) {
-        accx = 1;
+        moveHorz = 1;
     } else if (event.keyCode == 65) {
-        accx = -1;
+        moveHorz = -1;
     }
     if (event.keyCode == 83) {
-        accy = 1;
+        accy += 1;
     }
     if (event.keyCode == 87) {
-        accy = -1;
+        jump();
     }
 }, true)
 
 //On a key being let up
 window.addEventListener('keyup', (event) => {
+    //alert(event.keyCode);
     if (event.keyCode == 68 || event.keyCode == 65) {
         moveHorz = 0;
     }
-    if (event.keyCode == 83 || event.keyCode == 87) {
+    /*if (event.keyCode == 83 || event.keyCode == 87) {
         moveVert = 0;
-    }
+    }*/
 }, true)
 
 //Reads the file and stores it in variable file
@@ -60,58 +82,118 @@ file = file.substring(0, (file.length - 5));
 //Runs the correct script for each level
 if (file == 'level1') {
     document.body.insertAdjacentElement('afterbegin', player);
-    playerController();
     posy = (player.getBoundingClientRect().top);
+    runGame();
+}
+
+
+function runGame() {
+    if (playerControllable == true) {
+        playerController();
+    }
+    /*if (collisionsOn == true) {
+        detectCollisions();
+    }*/
+
+    if (testDraw == true) {
+        ctx.moveTo(posx, posy);
+        ctx.lineTo(cursorx, cursory);
+        ctx.stroke();
+    }
+
+    if (run = true) {
+        setTimeout('runGame()', 16);
+    }
 }
 
 //Player controller function
 function playerController() {
-    if (posx <= 0 || posx >= screen.width - 50) {
-        accx = accx * -1;
+    if (moveHorz == 1) {
+        accx += 0.1;
+    } else if (moveHorz == -1) {
+        accx += -0.1;
+    }
+    if (posx <= 0 || posx >= document.body.clientWidth - 50) {
+        accx = 0;
         velx = velx * -0.8;
         if (posx <= 0) {
             posx = 1;
         } else {
-            posx = screen.width - 51;
+            posx = document.body.clientWidth - 51;
         }
 
     }
+
     velx += accx;
-    if (accx < 0.5 || -0.5 <= accx) {
-        accx = 0;
-    } else {
-        accx = accx / 1.1;
+
+    if (accx != 0) {
+        if (accx < 0.01 && -0.01 <= accx) {
+            accx = 0;
+        } else {
+            if (onFloor == true) {
+                accx = accx / 1.1;
+            } else {
+                accx = accx / 2;
+            }
+        }
     }
+
+    if (velx < 0.5 && -0.5 <= velx) {
+        velx = 0;
+    }
+
     if (velx != 0) {
         //alert('trying');
         player.style.left = (posx + velx) + 'px';
         posx += velx;
     }
 
-    if (posy <= 0 || posy >= screen.availHeight - 98) {
-        accy = accy * -1;
-        vely = vely * -0.8;
+    if (posy <= 0 || posy >= document.body.clientHeight - 50) {
+        accy = 0;
+        vely = 0;
         if (posy <= 0) {
             posy = 1;
         } else {
-            //posy = screen.availHeight - 51;
+            onFloor = true;
+            posy = document.body.clientHeight - 50;
         }
-
+    }   else {
+        onFloor = false;
     }
+
     vely += accy;
-    if (accy < 0.5 || -0.5 <= accy) {
-        accy = 0;
-    } else {
-        accy = accy / 1.1;
-    }
-    if (vely != 0) {
-        //alert('trying');
-        player.style.top = (posy + vely) + 'px';
-        posy += vely;
+
+    if (vely < 0.5 && -0.5 <= vely) {
+        vely = 0;
     }
 
-    if (playerControllable == true) {
-        //alert('test');
-        setTimeout(playerController, 16);
+    
+    player.style.top = (posy + vely) + 'px';
+    posy += vely;
+
+    if (onFloor == true) {
+        velx = velx / 1.1
+        jumps = 1;
+    } else {
+        accy += 0.2
     }
 }
+
+function jump() {
+    if (jumps >= 1) {
+        jumps -= 1;
+        vely += -30;
+        posy += -5;
+        accy = 0;
+    }
+    setTimeout(16);
+}
+
+function getCursorPos(event) {
+    cursorx = event.clientX;
+    cursory = event.clientY;
+}
+
+/*function detectCollisions() {
+    //Empty for now
+}*/ 
