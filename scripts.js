@@ -1,7 +1,6 @@
 //Initializes many variables
 const newDiv = document.createElement('div');
 const body = document.querySelector('body');
-var testDraw = false;
 var canvas = document.querySelector('canvas');
 var cursorx = 0;
 var cursory = 0;
@@ -29,6 +28,10 @@ var accx = 0;
 var accy = 0;
 var playerControllable = true;
 var onFloor = false;
+var canGrapple = true;
+var grappling = false;
+var grapplex = 0;
+var grappley = 0;
 var jumps = 0;
 
 //On the DOMContent loading
@@ -39,13 +42,14 @@ window.addEventListener('DOMContentLoaded', function() {
 
 body.addEventListener('mousedown', function() {
     //alert('woah');
-    testDraw = true;
+    grappleOut();
 })
 
 body.addEventListener('mouseup', function() {
     //alert('haow');
-    testDraw = false;
+    grappleIn();
 })
+
 //Reads keystrokes
 window.addEventListener('keydown', (event) => {
     //alert(event.keyCode);
@@ -59,6 +63,9 @@ window.addEventListener('keydown', (event) => {
     }
     if (event.keyCode == 87) {
         jump();
+    }
+    if (event.keyCode == 8) {
+        canvas.setAttribute("width", document.body.clientWidth);
     }
 }, true)
 
@@ -91,14 +98,13 @@ function runGame() {
     if (playerControllable == true) {
         playerController();
     }
+
     /*if (collisionsOn == true) {
         detectCollisions();
     }*/
 
-    if (testDraw == true) {
-        ctx.moveTo(posx, posy);
-        ctx.lineTo(cursorx, cursory);
-        ctx.stroke();
+    if (grappling == true) {
+        doGrapple();
     }
 
     if (run = true) {
@@ -197,3 +203,31 @@ function getCursorPos(event) {
 /*function detectCollisions() {
     //Empty for now
 }*/ 
+
+function grappleOut() {
+    if (canGrapple == true) {
+        grapplex = cursorx;
+        grappley = cursory;
+        grappling = true;
+        ctx.beginPath();
+        ctx.moveTo((posx + 25), posy);
+        ctx.lineTo(grapplex, grappley);
+        ctx.stroke();
+        canGrapple = false;
+        doGrapple();
+    }
+}
+
+function doGrapple() {
+    canvas.setAttribute("width", document.body.clientWidth);
+    ctx.beginPath();
+    ctx.moveTo((posx + 25), posy);
+    ctx.lineTo(grapplex, grappley);
+    ctx.stroke();
+}
+
+function grappleIn() {
+    canvas.setAttribute("width", document.body.clientWidth);
+    grappling = false;
+    canGrapple = true;
+}
