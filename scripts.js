@@ -13,7 +13,7 @@ var run = true;
 //Initializes player character
 var player = document.createElement('div', id='player')
 player.style.position="absolute";
-player.style.backgroundColor="black";
+player.style.backgroundColor="red";
 player.style.width="50px";
 player.style.height="50px";
 player.style.left= '10px';
@@ -33,6 +33,11 @@ var grappling = false;
 var grapplex = 0;
 var grappley = 0;
 var jumps = 0;
+var grappleDistx = 0;
+var grappleDisty = 0;
+var grappleDist = 0;
+var grapplePow = 0;
+var flooring = 0;
 
 //On the DOMContent loading
 window.addEventListener('DOMContentLoaded', function() {
@@ -49,6 +54,11 @@ body.addEventListener('mouseup', function() {
     //alert('haow');
     grappleIn();
 })
+
+//Disables right click menu
+document.addEventListener('contextmenu', function(e){
+    e.preventDefault();
+}, false)
 
 //Reads keystrokes
 window.addEventListener('keydown', (event) => {
@@ -155,8 +165,11 @@ function playerController() {
     }
 
     if (posy <= 0 || posy >= document.body.clientHeight - 50) {
-        accy = 0;
-        vely = 0;
+        if (flooring == false) {
+            accy = 0;
+            vely = 0;
+            flooring = true;
+        }
         if (posy <= 0) {
             posy = 1;
         } else {
@@ -165,6 +178,7 @@ function playerController() {
         }
     }   else {
         onFloor = false;
+        flooring = false;
     }
 
     vely += accy;
@@ -181,7 +195,7 @@ function playerController() {
         velx = velx / 1.1
         jumps = 1;
     } else {
-        accy += 0.2
+        accy += 0.2;
     }
 }
 
@@ -224,6 +238,14 @@ function doGrapple() {
     ctx.moveTo((posx + 25), posy);
     ctx.lineTo(grapplex, grappley);
     ctx.stroke();
+    grappleDistx = (grapplex - posx);
+    grappleDisty = (grappley - posy);
+    grappleDist = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
+    grapplePow = grappleDist / 1000;
+    accx += grapplePow * (grappleDistx / grappleDist);
+    if (accy < 5) {
+        accy += grapplePow * (-Math.cos((grappleDisty / grappleDist) + (Math.PI / 2)));
+    }
 }
 
 function grappleIn() {
