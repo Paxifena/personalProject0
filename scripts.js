@@ -36,7 +36,8 @@ var jumps = 0;
 var grappleDistx = 0;
 var grappleDisty = 0;
 var grappleDist = 0;
-var grapplePow = 0;
+var grappleAngle = 0;
+var maxGrapple = 0;
 var flooring = 0;
 
 //On the DOMContent loading
@@ -224,10 +225,13 @@ function grappleOut() {
         grappley = cursory;
         grappling = true;
         ctx.beginPath();
-        ctx.moveTo((posx + 25), posy);
+        ctx.moveTo((posx + 25), (posy + 25));
         ctx.lineTo(grapplex, grappley);
         ctx.stroke();
         canGrapple = false;
+        grappleDistx = (grapplex - (posx + 25));
+        grappleDisty = (grappley - (posy + 25));
+        maxGrapple = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
         doGrapple();
     }
 }
@@ -235,17 +239,13 @@ function grappleOut() {
 function doGrapple() {
     canvas.setAttribute("width", document.body.clientWidth);
     ctx.beginPath();
-    ctx.moveTo((posx + 25), posy);
+    ctx.moveTo((posx + 25), (posy + 25));
     ctx.lineTo(grapplex, grappley);
     ctx.stroke();
-    grappleDistx = (grapplex - posx);
-    grappleDisty = (grappley - posy);
+    grappleDistx = (grapplex - (posx + 25));
+    grappleDisty = (grappley - (posy + 25));
     grappleDist = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
-    grapplePow = grappleDist / 1000;
-    accx += grapplePow * (grappleDistx / grappleDist);
-    if (accy < 5) {
-        accy += grapplePow * (-Math.cos((grappleDisty / grappleDist) + (Math.PI / 2)));
-    }
+    grappleAngle = Math.asin(-grappleDisty / grappleDist);
 }
 
 function grappleIn() {
