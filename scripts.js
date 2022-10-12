@@ -159,11 +159,9 @@ function playerController() {
         velx = 0;
     }
 
-    if (velx != 0) {
-        //alert('trying');
-        player.style.left = (posx + velx) + 'px';
-        posx += velx;
-    }
+    //alert('trying');
+    player.style.left = (posx + velx) + 'px';
+    posx += velx;
 
     if (posy <= 0 || posy >= document.body.clientHeight - 50) {
         if (flooring == false) {
@@ -245,7 +243,22 @@ function doGrapple() {
     grappleDistx = (grapplex - (posx + 25));
     grappleDisty = (grappley - (posy + 25));
     grappleDist = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
-    grappleAngle = Math.asin(-grappleDisty / grappleDist);
+    if ( grappleDistx >= 0 && grappleDisty <= 0) {
+
+        grappleAngle = Math.asin(-grappleDisty / grappleDist);
+
+    } else if (grappleDistx < 0 && grappleDisty <= 0) {
+
+        grappleAngle = ((Math.PI / 2) - (Math.asin(-grappleDisty / grappleDist))) + (Math.PI / 2);
+
+    } else if (grappleDistx < 0 && grappleDisty > 0) {
+
+        grappleAngle = Math.PI - Math.asin(-grappleDisty / grappleDist);
+
+    } else {
+
+        grappleAngle = (Math.PI * 2) + Math.asin(-grappleDisty / grappleDist);
+    }
 }
 
 function grappleIn() {
