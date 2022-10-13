@@ -39,6 +39,8 @@ var grappleDist = 0;
 var grappleDistMax = 0;
 var grappleAngle = 0;
 var flooring = 0;
+var grapplexColor = 'green';
+var grappleyColor = 'blue';
 
 //On the DOMContent loading
 window.addEventListener('DOMContentLoaded', function() {
@@ -260,18 +262,43 @@ function doGrapple() {
 
         grappleAngle = (Math.PI * 2) + Math.asin(-grappleDisty / grappleDist);
     }
+
+    //Determines if player is in grapple range
+    if (grappleDistx >= 0) {
+        if (Math.abs(grapplex + ( -grappleDist * (Math.cos(grappleAngle)))) >= Math.abs(grapplex + ( -grappleDistMax * (Math.cos(grappleAngle))))) {
+            grapplexColor = 'green';
+        } else {
+            velx = 0;
+            vely = 0;
+            accx = Math.sin(grappleAngle) * accx;
+            accy = Math.cos(grappleAngle) * accy;
+            posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 24;
+            grapplexColor = 'red';
+        }
+    } else {
+        if (Math.abs(grapplex + ( -grappleDist * (Math.cos(grappleAngle)))) <= Math.abs(grapplex + ( -grappleDistMax * (Math.cos(grappleAngle))))) {
+            grapplexColor = 'green';
+        } else {
+            velx = 0;
+            vely = 0;
+            accx = Math.sin(grappleAngle) * accx;
+            accy = Math.cos(grappleAngle) * accy;
+            posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 26;
+            grapplexColor = 'red';
+        }
+    }
     //Draws a circle where the player can be
     ctx.beginPath();
     ctx.strokeStyle = 'orange';
     ctx.arc(grapplex, grappley, grappleDistMax, 0, 2*Math.PI);
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle = 'green';
+    ctx.strokeStyle = grapplexColor;
     ctx.moveTo(grapplex, grappley);
     ctx.lineTo( grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley);
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle = 'blue';
+    ctx.strokeStyle = grappleyColor;
     ctx.moveTo(grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley, grappley);
     ctx.lineTo( grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley + ( grappleDist * (Math.sin(grappleAngle))));
     ctx.stroke();
