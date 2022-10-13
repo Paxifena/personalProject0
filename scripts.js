@@ -36,8 +36,8 @@ var jumps = 0;
 var grappleDistx = 0;
 var grappleDisty = 0;
 var grappleDist = 0;
+var grappleDistMax = 0;
 var grappleAngle = 0;
-var maxGrapple = 0;
 var flooring = 0;
 
 //On the DOMContent loading
@@ -229,7 +229,7 @@ function grappleOut() {
         canGrapple = false;
         grappleDistx = (grapplex - (posx + 25));
         grappleDisty = (grappley - (posy + 25));
-        maxGrapple = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
+        grappleDistMax = Math.sqrt((grappleDistx ** 2) + (grappleDisty ** 2));
         doGrapple();
     }
 }
@@ -237,6 +237,7 @@ function grappleOut() {
 function doGrapple() {
     canvas.setAttribute("width", document.body.clientWidth);
     ctx.beginPath();
+    ctx.strokeStyle = 'black';
     ctx.moveTo((posx + 25), (posy + 25));
     ctx.lineTo(grapplex, grappley);
     ctx.stroke();
@@ -259,6 +260,21 @@ function doGrapple() {
 
         grappleAngle = (Math.PI * 2) + Math.asin(-grappleDisty / grappleDist);
     }
+    //Draws a circle where the player can be
+    ctx.beginPath();
+    ctx.strokeStyle = 'orange';
+    ctx.arc(grapplex, grappley, grappleDistMax, 0, 2*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.moveTo(grapplex, grappley);
+    ctx.lineTo( grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'blue';
+    ctx.moveTo(grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley, grappley);
+    ctx.lineTo( grapplex + ( -grappleDist * (Math.cos(grappleAngle))), grappley + ( grappleDist * (Math.sin(grappleAngle))));
+    ctx.stroke();
 }
 
 function grappleIn() {
