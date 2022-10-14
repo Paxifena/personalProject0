@@ -157,9 +157,9 @@ function playerController() {
         }
     }
 
-    if (velx < 0.5 && -0.5 <= velx) {
+    /*if (velx < 0.5 && -0.5 <= velx) {
         velx = 0;
-    }
+    }*/
 
     //alert('trying');
     player.style.left = (posx + velx) + 'px';
@@ -183,20 +183,20 @@ function playerController() {
     }
 
     vely += accy;
+    posy += vely;
 
-    if (vely < 0.5 && -0.5 <= vely) {
+    /*if (vely < 0.5 && -0.5 <= vely) {
         vely = 0;
-    }
+    }*/
 
     
     player.style.top = (posy + vely) + 'px';
-    posy += vely;
 
     if (onFloor == true) {
         velx = velx / 1.1
         jumps = 1;
     } else {
-        accy += 0.2;
+        accy = 2;
     }
 }
 
@@ -204,7 +204,6 @@ function jump() {
     if (jumps >= 1) {
         jumps -= 1;
         vely += -30;
-        posy += -5;
         accy = 0;
     }
     setTimeout(16);
@@ -268,22 +267,24 @@ function doGrapple() {
         if (Math.abs(grapplex + ( -grappleDist * (Math.cos(grappleAngle)))) >= Math.abs(grapplex + ( -grappleDistMax * (Math.cos(grappleAngle))))) {
             grapplexColor = 'green';
         } else {
-            velx = 0;
-            vely = 0;
-            accx = Math.sin(grappleAngle) * accx;
-            accy = Math.cos(grappleAngle) * accy;
-            posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 24;
+            //accx = 0;
+            //accy = 0;
+            velx = Math.cos(grappleAngle) * -velx;
+            vely = Math.sin(grappleAngle) * -vely;
+            posy = grappley + ( grappleDistMax * (Math.sin(grappleAngle)));
+            //posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 24;
             grapplexColor = 'red';
         }
     } else {
         if (Math.abs(grapplex + ( -grappleDist * (Math.cos(grappleAngle)))) <= Math.abs(grapplex + ( -grappleDistMax * (Math.cos(grappleAngle))))) {
             grapplexColor = 'green';
         } else {
-            velx = 0;
-            vely = 0;
-            accx = Math.sin(grappleAngle) * accx;
-            accy = Math.cos(grappleAngle) * accy;
-            posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 26;
+            //accx = 0;
+            //accy = 0;
+            velx = Math.cos(grappleAngle) * velx;
+            vely = Math.sin(grappleAngle) * -vely;
+            posy = grappley + ( grappleDistMax * (Math.sin(grappleAngle)));
+            //posx = grapplex - (grappleDistMax * (Math.cos(grappleAngle))) - 26;
             grapplexColor = 'red';
         }
     }
